@@ -20,6 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("*") // 리액트 주소의 접근을 허락한다
                 .allowedMethods("GET", "POST", "PATCH", "DELETE", "OPTIONS") // 이 행동들을 허락한다
                 .allowedHeaders("*"); // Authorization 헤더 포함 모두 허용
+                .allowCredentials(false);
     }
 
     @Override
