@@ -7,28 +7,35 @@ phases:
       java: corretto17
     commands:
       - echo "Installing dependencies..."
-      # 프론트엔드: --prefix 옵션을 사용하여 cd 없이 설치
       - npm install --prefix frontend
       
   build:
     commands:
       - echo "Building projects..."
-      # 프론트엔드 빌드
       - npm run build --prefix frontend
+      - cd backend && chmod +x ./gradlew && ./gradlew clean build -x test && cd ..
       
-      # 백엔드 빌드
-      # 현재 위치가 루트이므로, backend 폴더로 진입하여 빌드 수행
-      - cd backend && chmod +x ./gradlew && ./gradlew clean build -x test
+      - echo "Logging in to Amazon ECR..."
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      
+      - echo "Building Docker images..."
+      - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-backend-repo:latest ./backend
+      - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-frontend-repo:latest ./frontend
       
   post_build:
     commands:
-      - echo "Build completed!"
+      - echo "Pushing Docker images to ECR..."
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-backend-repo:latest
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-frontend-repo:latest
+      
+      - echo "Updating EKS cluster config..."
+      - aws eks update-kubeconfig --name my-team-cluster --region $AWS_REGION
+      
+      - echo "Deploying to EKS..."
+      - kubectl set image deployment/backend-deployment backend=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-backend-repo:latest
+      - kubectl set image deployment/frontend-deployment frontend=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/my-frontend-repo:latest
+      - echo "Deployment completed!"
 
 artifacts:
-  # 여러 결과물을 합치기 위해 base-directory를 루트로 설정
-  base-directory: .
   files:
-    - frontend/dist/**/*
-    - backend/build/libs/*.jar
-  # 파일 경로를 그대로 유지하여 S3나 배포 대상에 전달
-  discard-paths: no
+    - '**/*' # 배포 후 로그 확인 등을 위해 루트 전체 아카이브
