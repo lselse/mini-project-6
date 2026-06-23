@@ -1,42 +1,19 @@
 version: 0.2
 
-env:
-  variables:
-    S3_BUCKET: "mini-161-angular-website"
-
 phases:
   install:
     runtime-versions:
       nodejs: 20
-      java: corretto17
     commands:
-      # 1. 프론트엔드 의존성 설치
-      - echo "Installing frontend dependencies..."
-      - cd frontend && npm install --include=dev
-      
+      - echo Installing frontend dependencies
+      - cd frontend
+      - npm install
   build:
     commands:
-      # 2. 프론트엔드 빌드
-      - echo "Building Vite project..."
-      - cd frontend && npm run build
-      
-      # 3. 백엔드 빌드
-      - echo "Building Spring Boot Application..."
-      - cd ../backend  # 현재 위치가 frontend이므로 상위로 나갔다가 backend로 이동
-      - chmod +x ./gradlew
-      - ./gradlew clean build -x test
-      
-  post_build:
-    commands:
-      # 4. 프론트엔드 S3 배포
-      - echo "Deploying frontend to S3..."
-      - aws s3 sync frontend/dist/ s3://$S3_BUCKET --delete
-      
-      - echo "Build and Deployment process completed!"
+      - echo Building frontend
+      - npm run build
 
 artifacts:
+  base-directory: frontend/dist
   files:
-    - frontend/dist/**/*
-    - backend/build/libs/*.jar
-  # 만약 특정 경로를 base로 잡고 싶다면 디렉토리 구조를 확인 후 설정하세요.
-  # 보통 통합 빌드 시에는 각각의 결과물을 아티팩트로 저장합니다.
+    - '**/*'
