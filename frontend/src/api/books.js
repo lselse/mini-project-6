@@ -1,6 +1,6 @@
 import { authHeaders } from './auth';
 
-const BASE_URL = 'http://a46a72be6fcc7475f8c39c3556dba827-1702841606.us-west-1.elb.amazonaws.com';
+const BASE_URL = 'http://a46a72be6fcc7475f8c39c3556dba827-1702841606.us-west-1.elb.amazonaws.com/books';
 
 // CUD 요청에 인증 헤더 자동 추가
 function jsonHeaders() {
@@ -12,7 +12,7 @@ function jsonHeaders() {
 
 export async function getBooks() {
   try {
-    const res = await fetch(`${BASE_URL}/books`);
+    const res = await fetch(BASE_URL);
     if (!res.ok) throw new Error(`도서 목록을 불러오지 못했습니다. (${res.status})`);
     return await res.json();
   } catch (err) {
@@ -23,7 +23,7 @@ export async function getBooks() {
 
 export async function getBook(id) {
   try {
-    const res = await fetch(`${BASE_URL}/books/${id}`);
+    const res = await fetch(`${BASE_URL}/${id}`);
     if (!res.ok) throw new Error(`도서를 불러오지 못했습니다. (${res.status})`);
     return await res.json();
   } catch (err) {
