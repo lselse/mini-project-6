@@ -1,0 +1,25 @@
+server:
+  port: 8080 # 백엔드 서버의 기본 포트번호입니다.
+
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/bookdb;MODE=MySQL;DB_CLOSE_DELAY=-1 # 파일에 영구 저장. backend/data/bookdb.mv.db
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true # 웹 브라우저에서 DB 안의 데이터를 직접 볼 수 있게 허락합니다.
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: update # 테이블이 없으면 만들고, 있으면 변경사항만 반영. 기존 데이터는 보존.
+    show-sql: true # 백엔드가 DB에 보내는 명령어를 화면에 보여줍니다.
+    defer-datasource-initialization: true # Hibernate가 표를 다 만든 뒤에 data.sql을 실행하도록 미룹니다.
+
+  sql:
+    init:
+      mode: always # data.sql을 항상 실행해서 시드 데이터를 자동 삽입합니다.
+      encoding: UTF-8 # Windows에서 한글이 깨지지 않도록 UTF-8 명시
