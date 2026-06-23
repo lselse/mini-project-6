@@ -31,6 +31,10 @@ phases:
       - echo "Updating EKS cluster config..."
       - aws eks update-kubeconfig --name mini161-cluster --region $AWSREGION
 
+      - echo "현재 위치와 파일 목록을 확인합니다 (디버깅):"
+      - pwd
+      - ls -al
+
       - echo "Applying Kubernetes manifests..."
       - kubectl apply -f k8s/
       
