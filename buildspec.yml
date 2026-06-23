@@ -19,14 +19,14 @@ phases:
       - aws ecr get-login-password --region $AWSREGION | docker login --username AWS --password-stdin $AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com
       
       - echo "Building Docker images..."
-      - docker build -t $AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/my-backend-repo:latest ./backend
-      - docker build -t $AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/my-frontend-repo:latest ./frontend
+      - docker build -t $AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-backend:latest ./backend
+      - docker build -t $AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-frontend:latest ./frontend
       
   post_build:
     commands:
       - echo "Pushing Docker images to ECR..."
-      - docker push $AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/my-backend-repo:latest
-      - docker push $AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/my-frontend-repo:latest
+      - docker push $AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-backend:latest
+      - docker push $AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-frontend:latest
       
       - echo "Updating EKS cluster config..."
       - aws eks update-kubeconfig --name mini161-cluster --region $AWSREGION
@@ -39,8 +39,8 @@ phases:
       - kubectl apply -f k8s/
       
       - echo "Deploying to EKS..."
-      - kubectl set image deployment/backend-deployment backend=$AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/my-backend-repo:latest
-      - kubectl set image deployment/frontend-deployment frontend=$AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/my-frontend-repo:latest
+      - kubectl set image deployment/backend-deployment backend=$AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-backend:latest
+      - kubectl set image deployment/frontend-deployment frontend=$AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-frontend:latest
       - echo "Deployment completed!"
 
 artifacts:
