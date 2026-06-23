@@ -2,29 +2,34 @@ version: 0.2
 
 env:
   variables:
-    S3_BUCKET: "my-react-frontend-bucket"
+    # 🚨 주의: 이곳에 본인이 AWS 콘솔에서 만든 실제 S3 버킷 이름을 적어주세요!
+    S3_BUCKET: "mini-161-angular-website"
 
 phases:
   install:
     runtime-versions:
-      nodejs: 18
+      nodejs: 20
     commands:
-      # ✨ 1. 프론트엔드 폴더로 먼저 이동합니다.
+      # 로봇이 폴더를 잃어버리지 않게 매 단계마다 frontend로 이동시킵니다.
       - cd frontend
       - echo "Installing dependencies..."
-      - npm install
+      # vite 에러 방지를 위해 devDependencies까지 강제 설치
+      - npm install --include=dev
+      
   build:
     commands:
+      - cd frontend
       - echo "Building the Vite project..."
       - npm run build
+      
   post_build:
     commands:
+      - cd frontend
       - echo "Deploying to S3..."
-      # 폴더 안에서 작업 중이므로 경로를 잘 확인하세요.
+      # 빌드된 결과물(dist 폴더)을 S3 버킷으로 통째로 복사해서 덮어씁니다.
       - aws s3 sync dist/ s3://$S3_BUCKET --delete
 
 artifacts:
-  # ✨ 2. 결과물 추출 경로에도 폴더명을 앞에 붙여줍니다.
   base-directory: frontend/dist
   files:
     - '**/*'
