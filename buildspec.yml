@@ -30,19 +30,13 @@ phases:
       
       - echo "Updating EKS cluster config..."
       - aws eks update-kubeconfig --name mini161-cluster --region $AWSREGION
-
-      - echo "현재 위치와 파일 목록을 확인합니다 (디버깅):"
-      - pwd
-      - ls -al
-
-      - echo "Applying Kubernetes manifests..."
-      - kubectl apply -f k8s/
       
       - echo "Deploying to EKS..."
+      - kubectl apply -f k8s/
       - kubectl set image deployment/backend-deployment backend=$AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-backend:latest
       - kubectl set image deployment/frontend-deployment frontend=$AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-frontend:latest
       - echo "Deployment completed!"
 
 artifacts:
   files:
-    - '**/*' # 배포 후 로그 확인 등을 위해 루트 전체 아카이브
+    - '**/*'
