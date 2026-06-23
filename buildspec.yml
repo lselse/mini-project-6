@@ -30,6 +30,9 @@ phases:
       
       - echo "Updating EKS cluster config..."
       - aws eks update-kubeconfig --name mini161-cluster --region $AWSREGION
+
+      - echo "Applying Kubernetes manifests..."
+      - kubectl apply -f k8s/
       
       - echo "Deploying to EKS..."
       - kubectl set image deployment/backend-deployment backend=$AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/my-backend-repo:latest
