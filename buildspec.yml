@@ -11,9 +11,8 @@ phases:
       
   build:
     commands:
-      - echo "Building Frontend..."
+      - echo "Building projects..."
       - npm run build --prefix frontend
-      - echo "Building Backend..."
       - cd backend && chmod +x ./gradlew && ./gradlew clean build -x test && cd ..
       
       - echo "Logging in to Amazon ECR..."
@@ -25,7 +24,7 @@ phases:
       
   post_build:
     commands:
-      - echo "Pushing Docker images..."
+      - echo "Pushing Docker images to ECR..."
       - docker push $AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-backend:latest
       - docker push $AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-frontend:latest
       
@@ -34,7 +33,10 @@ phases:
       
       - echo "Deploying to EKS..."
       - kubectl apply -f k8s/
-      # ✨ 핵심 추가: 쿠버네티스가 이미지를 새로 가져가도록 강제합니다!
       - kubectl set image deployment/backend-deployment backend=$AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-backend:latest
       - kubectl set image deployment/frontend-deployment frontend=$AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-frontend:latest
       - echo "Deployment completed!"
+
+artifacts:
+  files:
+    - '**/*'

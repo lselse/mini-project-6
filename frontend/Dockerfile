@@ -1,13 +1,9 @@
-# 1단계: Node.js 기반 빌드 스테이지
-FROM node:20 AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-
-# 2단계: Nginx를 활용한 실행/서빙 스테이지
+# Nginx 웹 서버 사용
 FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
+
+# Vite 빌드 결과물인 dist 폴더를 Nginx의 기본 HTML 경로로 복사
+COPY dist/ /usr/share/nginx/html
+
+# Nginx가 80번 포트로 통신하도록 설정
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
