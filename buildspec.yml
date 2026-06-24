@@ -39,4 +39,4 @@ phases:
 
 artifacts:
   files:
-    - '**/*
+    - '**/*'
