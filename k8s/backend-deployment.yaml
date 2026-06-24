@@ -14,18 +14,28 @@ spec:
     spec:
       containers:
       - name: backend
-        image: nginx # 임시 이미지 (buildspec에서 바로 교체됨)
+        # ECR에 푸시한 이미지를 정확히 바라보도록 명시하는 것이 좋습니다.
+        image: 879772956301.dkr.ecr.us-west-1.amazonaws.com/mini161-backend:latest
+        # ✨ 핵심 1: 항상 최신 이미지를 체크하도록 설정
+        imagePullPolicy: Always 
         ports:
         - containerPort: 8080
+        # ✨ 핵심 2: 백엔드 상태를 확인하는 헬스 체크 (실무 표준)
+        livenessProbe:
+          httpGet:
+            path: /books # 또는 서버 상태 확인이 가능한 경로
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: backend-service
 spec:
-  type: LoadBalancer
+  type: ClusterIP # 백엔드는 보통 외부 노출 안 하고 ClusterIP를 씁니다.
   selector:
     app: backend
   ports:
-    - port: 80
+    - port: 8080
       targetPort: 8080

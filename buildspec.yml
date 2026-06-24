@@ -39,4 +39,5 @@ phases:
 
 artifacts:
   files:
-    - '**/*'
+    - k8s/**/*
+    - backend/build/libs/*.jar
