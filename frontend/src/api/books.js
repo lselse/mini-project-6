@@ -1,6 +1,6 @@
 import { authHeaders } from './auth';
 
-const BASE_URL = 'http://a46a72be6fcc7475f8c39c3556dba827-1702841606.us-west-1.elb.amazonaws.com/books';
+const BASE_URL = 'http://a46a72be6fcc7475f8c39c3556dba827-1118470412.us-west-1.elb.amazonaws.com/books';
 
 // CUD 요청에 인증 헤더 자동 추가
 function jsonHeaders() {
