@@ -1,5 +1,5 @@
 # AWS 공식 퍼블릭 ECR
-FROM public.ecr.aws/nginx/nginx:alpine
+FROM public.ecr.aws/nginx/nginx:stable-alpine
 
 # 핵심 추가: 404 에러 방지용 커스텀 Nginx 설정 파일 덮어쓰기
 COPY nginx.conf /etc/nginx/conf.d/default.conf
