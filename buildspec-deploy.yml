@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      # ⭐ 변경 포인트: CodeBuild 환경에는 기본적으로 kubectl이 없으므로 설치해 줍니다.
+      - echo "Installing kubectl..."
+      - curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.29.0/2024-01-04/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl
+      - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+      
+  pre_build:
+    commands:
+      - echo "Updating EKS cluster config..."
+      - aws eks update-kubeconfig --name mini161-cluster --region $AWSREGION
+      
+  build:
+    commands:
+      # ⭐ 변경 포인트: 이전 단계에서 넘겨받은 k8s/ 폴더를 가지고 배포만 수행합니다.
+      - echo "Deploying to EKS..."
+      - kubectl apply -f k8s/
+      - kubectl set image deployment/backend-deployment backend=$AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-backend:latest
+      - kubectl set image deployment/frontend-deployment frontend=$AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-frontend:latest
+      - echo "Deployment completed!"
