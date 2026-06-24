@@ -29,7 +29,7 @@ phases:
       - docker push $AWSNUM.dkr.ecr.$AWSREGION.amazonaws.com/mini161-frontend:latest
       - echo "Build and Push completed!"
 
-# ⭐ 변경 포인트: 이제 전체 파일이 아니라, 다음 배포 단계에서 쓸 k8s 폴더만 압축해서 넘깁니다.
 artifacts:
   files:
     - 'k8s/**/*'
+    - 'buildspec-deploy.yml'
