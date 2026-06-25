@@ -13,7 +13,7 @@
 
 import { writeFileSync } from 'node:fs';
 
-const BACKEND_URL = 'http://a46a72be6fcc7475f8c39c3556dba827-1118470412.us-west-1.elb.amazonaws.com/books';
+const BACKEND_URL = 'a46a72be6fcc7475f8c39c3556dba827-1575990131.us-west-1.elb.amazonaws.com/books';
 const OUTPUT_PATH = './data.sql';
 
 function escapeSql(text) {
