@@ -29,4 +29,4 @@ spec:
               service:
                 name: frontend-service
                 port:
-                  number: 8
+                  number: 80
