@@ -22,6 +22,21 @@ spec:
                 port:
                   number: 8080
 
+          path: /books
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 80
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 80
+
           # 2. 프론트엔드 라우팅: 그 외 모든 루트(/) 요청은 frontend-service로 전달
           - path: /
             pathType: Prefix
